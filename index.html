@@ -1,0 +1,427 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--color-background-tertiary);color:var(--color-text-primary);font-size:14px;line-height:1.5}
+.shell{max-width:1100px;margin:0 auto;padding:1.5rem}
+.top-bar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:1rem}
+.logo-badge{font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--color-text-info);text-transform:uppercase;margin-bottom:4px}
+.logo h1{font-size:20px;font-weight:500;letter-spacing:-0.02em}
+.logo p{font-size:12px;color:var(--color-text-secondary)}
+.period-tag{font-size:11px;padding:4px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);color:var(--color-text-secondary);white-space:nowrap;align-self:center}
+.load-section{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1.25rem}
+.load-label{font-size:10px;font-weight:500;letter-spacing:0.1em;color:var(--color-text-tertiary);text-transform:uppercase;margin-bottom:10px}
+.load-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:580px){.load-grid{grid-template-columns:1fr}}
+.load-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem}
+.load-card h3{font-size:13px;font-weight:500;margin-bottom:5px}
+.load-card p{font-size:12px;color:var(--color-text-secondary);margin-bottom:10px;line-height:1.6}
+.url-badge{font-family:monospace;font-size:10px;color:var(--color-text-tertiary);background:var(--color-background-secondary);padding:5px 8px;border-radius:4px;margin-bottom:8px;word-break:break-all}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--border-radius-md);font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:inherit;transition:all .15s}
+.btn:hover{border-color:var(--color-border-info);color:var(--color-text-info)}
+.btn-primary{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.file-drop{border:1px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:.75rem;text-align:center;cursor:pointer;color:var(--color-text-secondary);font-size:12px;margin-bottom:8px;transition:all .2s}
+.file-drop:hover{border-color:var(--color-border-info);color:var(--color-text-info)}
+input[type="file"]{display:none}
+.prog-wrap{margin-bottom:1rem;display:none}
+.prog-row{display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:5px}
+.prog-bar{height:2px;background:var(--color-background-secondary);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--color-text-info);transition:width .3s;border-radius:2px}
+.log{font-family:monospace;font-size:11px;color:var(--color-text-tertiary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:4px;padding:8px 10px;margin-top:6px;max-height:60px;overflow-y:auto;line-height:1.9}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+@media(max-width:620px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.kpi .lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em}
+.kpi .val{font-size:22px;font-weight:500;letter-spacing:-0.02em}
+.kpi .val.red{color:var(--color-text-danger)}
+.kpi .val.amber{color:var(--color-text-warning)}
+.kpi .val.green{color:var(--color-text-success)}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+@media(max-width:620px){.charts-grid{grid-template-columns:1fr}}
+.chart-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem}
+.chart-card h3{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.09em;color:var(--color-text-secondary);margin-bottom:1rem}
+.chart-wrap{position:relative}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.75rem;align-items:center}
+.filter-row input,.filter-row select{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 10px;color:var(--color-text-primary);font-family:inherit;font-size:12px}
+.filter-row input{width:220px}
+.filter-row input:focus,.filter-row select:focus{outline:none;border-color:var(--color-border-info)}
+.tbl-section{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:1.25rem}
+.tbl-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.tbl-head span{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--color-text-secondary)}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:var(--color-background-tertiary);padding:9px 12px;text-align:left;font-size:10px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;color:var(--color-text-tertiary);border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer;white-space:nowrap;user-select:none}
+thead th:hover{color:var(--color-text-info)}
+thead th.sorted{color:var(--color-text-info)}
+tbody tr{border-bottom:0.5px solid var(--color-border-tertiary);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--color-background-tertiary)}
+tbody td{padding:9px 12px;color:var(--color-text-primary)}
+td.name{font-weight:500}
+td.code{font-family:monospace;font-size:11px;color:var(--color-text-tertiary)}
+.bar-cell{display:flex;align-items:center;gap:6px}
+.mini-bar{height:4px;border-radius:2px;min-width:2px;background:var(--color-background-info)}
+.sit-pill{display:inline-block;padding:2px 5px;border-radius:3px;font-size:10px;font-weight:500;margin:1px;font-family:monospace}
+.pag{display:flex;gap:5px;align-items:center;padding:8px 14px;justify-content:flex-end;border-top:0.5px solid var(--color-border-tertiary);flex-wrap:wrap}
+.pag button{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);border-radius:var(--border-radius-md);padding:3px 9px;font-family:monospace;font-size:11px;cursor:pointer;transition:all .15s}
+.pag button:hover,.pag button.active{border-color:var(--color-border-info);color:var(--color-text-info)}
+.pag .pg-info{font-size:11px;color:var(--color-text-tertiary);font-family:monospace}
+.empty{text-align:center;padding:3.5rem 2rem;color:var(--color-text-tertiary)}
+.empty h3{font-size:15px;color:var(--color-text-secondary);margin-bottom:6px;font-weight:500}
+.empty p{font-size:13px;line-height:1.7}
+.sit-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<div class="shell">
+  <div class="top-bar">
+    <div class="logo">
+      <div class="logo-badge">BCRA · Central de Deudores</div>
+      <h1>Morosidad por Entidad Financiera</h1>
+      <p>Sistema Financiero Argentino — Datos oficiales BCRA</p>
+    </div>
+    <div class="period-tag" id="periodTag">Sin datos cargados</div>
+  </div>
+
+  <div class="load-section">
+    <div class="load-label">Cargar datos</div>
+    <div class="load-grid">
+      <div class="load-card">
+        <h3>Descargar desde BCRA</h3>
+        <p>Descargá el archivo mensual de morosos del BCRA, descomprimilo con 7-Zip y cargalo acá.</p>
+        <div class="url-badge">https://www3.bcra.gob.ar/ChequesDeudoresMFT/Deudores</div>
+        <button class="btn btn-primary" onclick="openBCRA()">↗ Ir al sitio del BCRA</button>
+      </div>
+      <div class="load-card">
+        <h3>Cargar archivo descomprimido</h3>
+        <p>Arrastrá o seleccioná el archivo <code style="font-family:monospace;font-size:11px">YYYYMMMOROSOS.txt</code> ya descomprimido.</p>
+        <div class="file-drop" id="dropZone" onclick="document.getElementById('fileIn').click()" ondragover="onDrag(event)" ondrop="onDrop(event)">
+          Click o arrastrá el archivo aquí<br>
+          <span style="font-size:10px;color:var(--color-text-tertiary)">TXT descomprimido · típicamente 50–500 MB</span>
+        </div>
+        <input type="file" id="fileIn" accept=".txt,.dat,.csv" onchange="loadFile(event)">
+      </div>
+    </div>
+  </div>
+
+  <div class="prog-wrap" id="progWrap">
+    <div class="prog-row"><span id="progLabel">Procesando...</span><span id="progPct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="log" id="logBox"></div>
+  </div>
+
+  <div id="dashboard" style="display:none">
+    <div class="kpi-grid" id="kpiGrid"></div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Irregularidad por monto — Top 15</h3>
+        <div class="chart-wrap" style="height:280px"><canvas id="chartIrr"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Distribución de situaciones (deudores)</h3>
+        <div class="chart-wrap" style="height:280px"><canvas id="chartSit"></canvas></div>
+      </div>
+    </div>
+    <div class="filter-row">
+      <input type="text" id="searchBox" placeholder="Buscar entidad..." oninput="applyFilters()">
+      <select id="sortSel" onchange="applyFilters()">
+        <option value="irr_monto">Ordenar: % irreg. monto</option>
+        <option value="irr_cant">% irreg. cantidad</option>
+        <option value="monto_total">Monto total</option>
+        <option value="deudores">Deudores</option>
+        <option value="nombre">Nombre</option>
+      </select>
+    </div>
+    <div class="sit-legend" id="sitLegend"></div>
+    <div class="tbl-section">
+      <div class="tbl-head">
+        <span>Entidades financieras</span>
+        <span id="tblCount" style="color:var(--color-text-tertiary)">–</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Entidad</th>
+              <th class="sorted" onclick="setSortCol('deudores')">Deudores ↕</th>
+              <th onclick="setSortCol('monto_total')">Monto total (miles $) ↕</th>
+              <th onclick="setSortCol('irr_monto')">% Irreg. monto ↕</th>
+              <th onclick="setSortCol('irr_cant')">% Irreg. cantidad ↕</th>
+              <th>Situaciones</th>
+            </tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+      <div class="pag" id="pag"></div>
+    </div>
+  </div>
+
+  <div class="empty" id="emptyState">
+    <h3>Sin datos cargados</h3>
+    <p>Descargá el archivo YYYYMMMOROSOS.7Z del sitio del BCRA,<br>descomprimilo y cargá el .txt para ver el análisis por entidad.</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── Nómina completa actualizada a Sept 2025 (fuente: BCRA) ──
+const ENT = {
+  "7":"Banco de Galicia y Buenos Aires","11":"Banco de la Nación Argentina",
+  "14":"Banco de la Pcia. de Buenos Aires","15":"ICBC (Industrial and Commercial Bank of China)",
+  "16":"Citibank N.A.","17":"BBVA Banco Francés","18":"MUFG Bank, Ltd.",
+  "20":"Banco de la Pcia. de Córdoba","27":"Banco Supervielle",
+  "29":"Banco Ciudad de Buenos Aires","34":"Banco Patagonia",
+  "44":"Banco Hipotecario","45":"Banco de San Juan","60":"Banco del Tucumán",
+  "65":"Banco Municipal de Rosario","72":"Banco Santander Argentina",
+  "83":"Banco del Chubut","86":"Banco de Santa Cruz",
+  "93":"Banco de la Pampa","94":"Banco de Corrientes",
+  "97":"Banco Pcia. del Neuquén","131":"Bank of China (Sucursal Bs. As.)",
+  "143":"Brubank","147":"BiBank (ex Interfinanzas)","150":"HSBC Bank Argentina",
+  "165":"JPMorgan Chase Bank","191":"Banco Credicoop Coop. Ltdo.",
+  "198":"Banco de Valores","247":"Banco Roela","254":"Banco Mariva",
+  "259":"Banco Itaú Argentina","262":"Bank of America, N.A.","266":"BNP Paribas",
+  "268":"Banco Pcia. de Tierra del Fuego","269":"Banco Rep. Oriental del Uruguay",
+  "277":"Banco Saenz","281":"Banco Meridian","285":"Banco Macro",
+  "299":"Banco Comafi","300":"Banco de Inversión y Comercio Exterior (BICE)",
+  "301":"Banco Piano","305":"Banco Julio","309":"Banco Rioja",
+  "310":"Banco del Sol","311":"Nuevo Banco del Chaco","312":"Banco Voii",
+  "315":"Banco de Formosa","319":"Banco CMF","321":"Banco de Santiago del Estero",
+  "322":"Banco Industrial","330":"Nuevo Banco de Santa Fe","331":"Banco Cetelem Argentina",
+  "332":"Banco de Servicios Financieros","336":"Banco Bradesco Argentina",
+  "338":"Banco de Servicios y Transacciones","339":"RCI Banque",
+  "340":"BACS Banco de Crédito y Securitización","341":"Banco MasVentas",
+  "384":"Uala Bank (ex Wilobank)","386":"Nuevo Banco de Entre Ríos",
+  "389":"Banco Columbia","426":"Banco BICA","431":"Banco Coinag",
+  "432":"Banco de Comercio",
+  // Compañías Financieras
+  "44059":"Ford Credit Cía. Financiera","44077":"Cía. Financiera Argentina",
+  "44088":"Volkswagen Financial Services","44090":"Cordial Cía. Financiera",
+  "44092":"FCA Cía. Financiera","44093":"GPAT Cía. Financiera",
+  "44094":"Mercedes-Benz Cía. Financiera","44095":"Rombo Cía. Financiera",
+  "44096":"John Deere Credit Cía. Financiera","44098":"PSA Finance Argentina",
+  "44099":"Toyota Cía. Financiera de Argentina","44100":"Finandino Cía. Financiera",
+  "45056":"Montemar Cía. Financiera","45072":"Transatlántica Cía. Financiera",
+  // Cajas de crédito
+  "65203":"Caja de Crédito Cuenca Coop. Ltda.",
+  // Emisoras de tarjetas / otros
+  "500":"Naranja X","501":"Tarjeta Naranja (Naranja X)","310":"Banco del Sol",
+  // PSPs que reportan a central de deudores
+  "600":"Mercado Crédito (Mercado Libre)","601":"Ank","602":"Personal Pay",
+  "603":"MODO","604":"Prex","605":"Lemon Cash","606":"Cocos Capital",
+};
+
+function entName(cod){
+  const c = String(parseInt(cod,10));
+  return ENT[c] || ENT[cod] || null;
+}
+function displayName(cod){
+  return entName(cod) || `Entidad ${String(cod).padStart(5,'0')}`;
+}
+
+const SIT_COLORS = {1:'#22c55e',2:'#3b82f6',3:'#f59e0b',4:'#f97316',5:'#ef4444',6:'#991b1b'};
+const SIT_LABELS = {1:'Normal',2:'Con seguimiento',3:'Con problemas',4:'Alto riesgo',5:'Irrecuperable',6:'Irrecup. técnica'};
+
+let allData=[], filtered=[], page=1, sortCol='irr_monto';
+let chartIrr=null, chartSit=null;
+const PAGE=25;
+
+function openBCRA(){ window.open('https://www3.bcra.gob.ar/ChequesDeudoresMFT/Deudores','_blank'); }
+function onDrag(e){ e.preventDefault(); document.getElementById('dropZone').style.borderStyle='solid'; }
+function onDrop(e){ e.preventDefault(); document.getElementById('dropZone').style.borderStyle='dashed'; if(e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); }
+function loadFile(e){ if(e.target.files[0]) processFile(e.target.files[0]); }
+function log(m){ const l=document.getElementById('logBox'); l.innerHTML+=`<div>${m}</div>`; l.scrollTop=l.scrollHeight; }
+function setProgress(p,lbl){ document.getElementById('progFill').style.width=p+'%'; document.getElementById('progPct').textContent=Math.round(p)+'%'; if(lbl) document.getElementById('progLabel').textContent=lbl; }
+function showProg(){ document.getElementById('progWrap').style.display='block'; }
+function hideProg(){ document.getElementById('progWrap').style.display='none'; }
+
+async function processFile(file){
+  showProg(); setProgress(2,'Leyendo archivo...');
+  log(`Archivo: ${file.name} (${(file.size/1024/1024).toFixed(1)} MB)`);
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('dashboard').style.display='none';
+
+  const CHUNK=8*1024*1024, dec=new TextDecoder('latin1');
+  let offset=0, left='';
+  const ents={};
+  let lines=0;
+
+  while(offset<file.size){
+    const buf=await file.slice(offset,offset+CHUNK).arrayBuffer();
+    const txt=left+dec.decode(buf,{stream:true});
+    const rows=txt.split('\n'); left=rows.pop();
+    for(const r of rows){ parseLine(r,ents); lines++; }
+    offset+=CHUNK;
+    setProgress(5+80*(offset/file.size),`Procesando… ${(offset/1024/1024).toFixed(0)} / ${(file.size/1024/1024).toFixed(0)} MB`);
+    await new Promise(r=>setTimeout(r,0));
+  }
+  if(left.trim()) parseLine(left,ents);
+  log(`Líneas: ${lines.toLocaleString('es-AR')}`);
+  setProgress(92,'Calculando métricas…');
+  await new Promise(r=>setTimeout(r,0));
+  allData=buildMetrics(ents);
+  log(`Entidades encontradas: ${allData.length}`);
+
+  const m=file.name.match(/(\d{6})/);
+  if(m){ const ym=m[1]; document.getElementById('periodTag').textContent=`Período: ${ym.slice(4,6)}/${ym.slice(0,4)}`; }
+
+  setProgress(100,'Listo');
+  setTimeout(()=>{ hideProg(); renderDashboard(); },400);
+}
+
+function parseLine(line,ents){
+  if(!line.trim()) return;
+  let cod,sit,monto;
+
+  if(line.includes('|')){
+    const p=line.split('|');
+    cod=(p[0]||'').trim(); sit=parseInt((p[2]||'').trim(),10); monto=parseFloat((p[3]||'0').replace(',','.'))||0;
+  } else if(line.includes(';')){
+    const p=line.split(';');
+    cod=(p[0]||'').trim(); sit=parseInt((p[2]||'').trim(),10); monto=parseFloat((p[3]||'0').replace(',','.'))||0;
+  } else {
+    if(line.length<17) return;
+    cod=line.substring(0,5).trim();
+    sit=parseInt(line.substring(16,17).trim(),10);
+    monto=parseFloat(line.substring(17,Math.min(32,line.length)).trim())||0;
+  }
+
+  const key=parseInt(cod,10);
+  if(!cod||isNaN(sit)||sit<1||sit>6||isNaN(key)) return;
+  if(!ents[key]) ents[key]={cod:String(key),sits:{1:0,2:0,3:0,4:0,5:0,6:0},montos:{1:0,2:0,3:0,4:0,5:0,6:0}};
+  ents[key].sits[sit]++;
+  ents[key].montos[sit]+=monto;
+}
+
+function buildMetrics(ents){
+  return Object.values(ents).map(e=>{
+    const td=Object.values(e.sits).reduce((a,b)=>a+b,0);
+    const tm=Object.values(e.montos).reduce((a,b)=>a+b,0);
+    const dm=e.sits[2]+e.sits[3]+e.sits[4]+e.sits[5]+e.sits[6];
+    const mm=e.montos[2]+e.montos[3]+e.montos[4]+e.montos[5]+e.montos[6];
+    return {
+      cod:e.cod, nombre:displayName(e.cod),
+      esConocida:!!entName(e.cod),
+      deudores:td, monto_total:tm,
+      irr_cant:td>0?(dm/td*100):0,
+      irr_monto:tm>0?(mm/tm*100):0,
+      sits:e.sits, montos:e.montos
+    };
+  });
+}
+
+function renderDashboard(){
+  document.getElementById('dashboard').style.display='block';
+  document.getElementById('emptyState').style.display='none';
+  const td=allData.reduce((a,e)=>a+e.deudores,0);
+  const tm=allData.reduce((a,e)=>a+e.monto_total,0);
+  const ai=allData.length?allData.reduce((a,e)=>a+e.irr_monto,0)/allData.length:0;
+  const ac=allData.length?allData.reduce((a,e)=>a+e.irr_cant,0)/allData.length:0;
+  document.getElementById('kpiGrid').innerHTML=`
+    <div class="kpi"><div class="lbl">Deudores totales</div><div class="val">${td.toLocaleString('es-AR')}</div></div>
+    <div class="kpi"><div class="lbl">Monto total (miles $)</div><div class="val">${(tm/1e6).toFixed(1)}B</div></div>
+    <div class="kpi"><div class="lbl">Irreg. prom. monto</div><div class="val ${ai>30?'red':ai>15?'amber':'green'}">${ai.toFixed(1)}%</div></div>
+    <div class="kpi"><div class="lbl">Irreg. prom. cantidad</div><div class="val ${ac>30?'red':ac>15?'amber':'green'}">${ac.toFixed(1)}%</div></div>`;
+  renderSitLegend(); renderCharts(); applyFilters();
+}
+
+function renderSitLegend(){
+  document.getElementById('sitLegend').innerHTML=Object.entries(SIT_LABELS).map(([s,l])=>
+    `<span class="sit-pill" style="background:${SIT_COLORS[s]}22;color:${SIT_COLORS[s]};border:1px solid ${SIT_COLORS[s]}44">Sit.${s} — ${l}</span>`
+  ).join('');
+}
+
+function renderCharts(){
+  const top15=[...allData].sort((a,b)=>b.irr_monto-a.irr_monto).slice(0,15);
+  if(chartIrr) chartIrr.destroy();
+  if(chartSit) chartSit.destroy();
+
+  // Use a neutral color that works in both modes
+  const tc='#888';
+
+  chartIrr=new Chart(document.getElementById('chartIrr'),{
+    type:'bar',
+    data:{
+      labels:top15.map(e=>e.nombre.length>24?e.nombre.slice(0,24)+'…':e.nombre),
+      datasets:[{
+        label:'% Irreg. monto',
+        data:top15.map(e=>+e.irr_monto.toFixed(2)),
+        backgroundColor:top15.map(e=>e.irr_monto>40?'#ef4444':e.irr_monto>20?'#f59e0b':'#22c55e'),
+        borderRadius:3,borderWidth:0
+      }]
+    },
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.toFixed(1)}%`}}},
+      scales:{
+        x:{ticks:{color:tc,font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(128,128,128,0.1)'},max:100},
+        y:{ticks:{color:tc,font:{size:10}},grid:{display:false}}
+      }
+    }
+  });
+
+  const sitTotals={1:0,2:0,3:0,4:0,5:0,6:0};
+  allData.forEach(e=>{Object.entries(e.sits).forEach(([s,n])=>{sitTotals[s]+=n;});});
+  const se=Object.entries(sitTotals).filter(([,v])=>v>0);
+
+  chartSit=new Chart(document.getElementById('chartSit'),{
+    type:'doughnut',
+    data:{
+      labels:se.map(([s])=>SIT_LABELS[s]),
+      datasets:[{data:se.map(([,v])=>v),backgroundColor:se.map(([s])=>SIT_COLORS[s]),borderWidth:0,hoverOffset:8}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'right',labels:{color:tc,font:{size:11},boxWidth:10,padding:8}},
+        tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw.toLocaleString('es-AR')}`}}
+      }
+    }
+  });
+}
+
+function setSortCol(col){ sortCol=col; document.getElementById('sortSel').value=col; applyFilters(); }
+
+function applyFilters(){
+  const q=document.getElementById('searchBox').value.toLowerCase();
+  sortCol=document.getElementById('sortSel').value;
+  filtered=allData.filter(e=>!q||e.nombre.toLowerCase().includes(q)||e.cod.includes(q));
+  filtered.sort((a,b)=>sortCol==='nombre'?a.nombre.localeCompare(b.nombre):b[sortCol]-a[sortCol]);
+  document.getElementById('tblCount').textContent=`${filtered.length} entidades`;
+  page=1; renderTable();
+}
+
+function renderTable(){
+  const start=(page-1)*PAGE, end=start+PAGE;
+  const rows=filtered.slice(start,end);
+  const maxM=filtered[0]?.monto_total||1;
+  document.getElementById('tblBody').innerHTML=rows.map((e,i)=>{
+    const pills=Object.entries(e.sits).filter(([,v])=>v>0).map(([s,v])=>
+      `<span class="sit-pill" style="background:${SIT_COLORS[s]}22;color:${SIT_COLORS[s]};border:1px solid ${SIT_COLORS[s]}44">Sit.${s}: ${v.toLocaleString('es-AR')}</span>`
+    ).join('');
+    const bw=Math.max(2,Math.round(e.monto_total/maxM*100));
+    const ic=e.irr_monto>40?'#ef4444':e.irr_monto>20?'#f59e0b':'#22c55e';
+    const ic2=e.irr_cant>30?'#ef4444':e.irr_cant>15?'#f59e0b':'#22c55e';
+    return `<tr>
+      <td style="color:var(--color-text-tertiary);font-family:monospace;font-size:11px">${start+i+1}</td>
+      <td class="name">${e.nombre}${!e.esConocida?` <span style="font-size:10px;color:var(--color-text-tertiary)">(no mapeada)</span>`:''}</td>
+      <td class="code">${String(e.cod).padStart(5,'0')}</td>
+      <td style="font-family:monospace">${e.deudores.toLocaleString('es-AR')}</td>
+      <td><div class="bar-cell"><div class="mini-bar" style="width:${bw}px"></div><span style="font-family:monospace">${e.monto_total.toLocaleString('es-AR')}</span></div></td>
+      <td style="font-family:monospace;font-weight:500;color:${ic}">${e.irr_monto.toFixed(1)}%</td>
+      <td style="font-family:monospace;color:${ic2}">${e.irr_cant.toFixed(1)}%</td>
+      <td>${pills}</td>
+    </tr>`;
+  }).join('');
+
+  const tp=Math.ceil(filtered.length/PAGE);
+  let pg='<span class="pg-info">'+filtered.length+' resultados</span>';
+  for(let p=1;p<=Math.min(tp,10);p++) pg+=`<button onclick="goPage(${p})" class="${p===page?'active':''}">${p}</button>`;
+  if(tp>10) pg+=`<span class="pg-info" style="margin-left:4px">… ${tp} págs.</span>`;
+  document.getElementById('pag').innerHTML=pg;
+}
+
+function goPage(p){ page=p; renderTable(); }
+</script>
